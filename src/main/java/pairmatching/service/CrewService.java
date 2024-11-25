@@ -17,10 +17,10 @@ public class CrewService {
     }
 
     public void registerCrews() {
-//        List<String> backendCrewNames = FileReader.readCrew("./src/main/resources/backend-crew.md");
-//        List<String> frontEndCrewNames = FileReader.readCrew("./src/main/resources/frontend-crew.md");
-        List<String> backendCrewNames = FileReader.readCrew("./java-pairmatching-precourse/src/main/resources/backend-crew.md");
-        List<String> frontEndCrewNames = FileReader.readCrew("./java-pairmatching-precourse/src/main/resources/frontend-crew.md");
+        List<String> backendCrewNames = FileReader.readCrew("./src/main/resources/backend-crew.md");
+        List<String> frontEndCrewNames = FileReader.readCrew("./src/main/resources/frontend-crew.md");
+//        List<String> backendCrewNames = FileReader.readCrew("./java-pairmatching-precourse/src/main/resources/backend-crew.md");
+//        List<String> frontEndCrewNames = FileReader.readCrew("./java-pairmatching-precourse/src/main/resources/frontend-crew.md");
 
         List<String> totalCrewNames = Stream.of(backendCrewNames, frontEndCrewNames)
                 .flatMap(x -> x.stream())

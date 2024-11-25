@@ -12,10 +12,10 @@ import pairmatching.model.lesson.Course;
 import pairmatching.model.lesson.Mission;
 import pairmatching.repository.PairRepository;
 
-public class PairRetrieveService {
+public class PairEtcService {
     private final PairRepository pairRepository;
 
-    public PairRetrieveService(PairRepository pairRepository) {
+    public PairEtcService(PairRepository pairRepository) {
         this.pairRepository = pairRepository;
     }
 
@@ -39,5 +39,9 @@ public class PairRetrieveService {
             pairCrewNames.add(onePairCrewNames);
         }
         return new PairDto(pairCrewNames);
+    }
+
+    public void initializePairs() {
+        pairRepository.initializeAll();
     }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 import pairmatching.dto.LessonDto;
 import pairmatching.dto.MissionInfoDto;
 import pairmatching.dto.PairDto;
-import pairmatching.service.PairRetrieveService;
+import pairmatching.service.PairEtcService;
 import pairmatching.util.PairExistsException;
 import pairmatching.service.CrewService;
 import pairmatching.service.MissionService;
@@ -18,17 +18,17 @@ public class PairMatchingController {
     private final CrewService crewService;
     private final MissionService missionService;
     private final PairMatchService pairMatchService;
-    private final PairRetrieveService pairRetrieveService;
+    private final PairEtcService pairEtcService;
 
     public PairMatchingController(InputView inputView, OutputView outputView, CrewService crewService,
                                   MissionService missionService, PairMatchService pairMatchService,
-                                  PairRetrieveService pairRetrieveService) {
+                                  PairEtcService pairEtcService) {
         this.inputView = inputView;
         this.outputView = outputView;
         this.crewService = crewService;
         this.missionService = missionService;
         this.pairMatchService = pairMatchService;
-        this.pairRetrieveService = pairRetrieveService;
+        this.pairEtcService = pairEtcService;
     }
 
     public void run() {
@@ -66,7 +66,8 @@ public class PairMatchingController {
                 outputView.printRetrievedPairs(pairDto);
             }
             if (function.equals("3")) {
-
+                pairEtcService.initializePairs();
+                outputView.printInitialization();
             }
             doOneFunction(missionInfoDto);
         }
@@ -96,7 +97,7 @@ public class PairMatchingController {
             try {
                 List<String> lessonChoice = chooseLesson();
                 LessonDto lessonDto = missionService.findMatchingLesson(lessonChoice);
-                return pairRetrieveService.retrievePair(lessonDto);
+                return pairEtcService.retrievePair(lessonDto);
             } catch (IllegalStateException | IllegalArgumentException e) {
                 outputView.printErrorMessage("[ERROR] 잘못된 입력입니다. 다시 입력해주세요.");
             }

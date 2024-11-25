@@ -64,4 +64,10 @@ public class PairRepository {
         }
         throw new IllegalStateException("[SYSTEM] 해당하는 과정과 미션의 페어가 없습니다.");
     }
+
+    public void initializeAll() {
+        for (Pair pair : pairs) {
+            pairs.remove(pair);
+        }
+    }
 }

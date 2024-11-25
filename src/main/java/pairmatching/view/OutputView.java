@@ -80,4 +80,8 @@ public class OutputView {
         }
         printMatchedPairs(pairDto);
     }
+
+    public void printInitialization() {
+        System.out.println(System.lineSeparator() + "초기화 되었습니다." + System.lineSeparator());
+    }
 }

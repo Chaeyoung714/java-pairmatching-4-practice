@@ -7,7 +7,7 @@ import pairmatching.repository.PairRepository;
 import pairmatching.service.CrewService;
 import pairmatching.service.MissionService;
 import pairmatching.service.PairMatchService;
-import pairmatching.service.PairRetrieveService;
+import pairmatching.service.PairEtcService;
 import pairmatching.view.InputView;
 import pairmatching.view.OutputView;
 
@@ -23,7 +23,7 @@ public class Application {
                 , new CrewService(crewRepository)
                 , new MissionService(missionRespository)
                 , new PairMatchService(missionRespository, crewRepository, pairRepository)
-                , new PairRetrieveService(pairRepository)
+                , new PairEtcService(pairRepository)
         );
         controller.run();
     }
