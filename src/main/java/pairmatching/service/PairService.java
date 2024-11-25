@@ -2,7 +2,10 @@ package pairmatching.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import pairmatching.dto.PairDtos;
+import java.util.Optional;
+import pairmatching.dto.LessonDto;
+import pairmatching.dto.PairDto;
+import pairmatching.model.CrewPair;
 import pairmatching.model.Pair;
 import pairmatching.util.PairDuplicationException;
 import pairmatching.util.PairExistsException;
@@ -26,16 +29,18 @@ public class PairService {
         this.pairRepository = pairRepository;
     }
 
-    public PairDtos matchPairs(List<String> choice) {
+    public void checkExistingPair(LessonDto lessonChoice) {
+        if (pairRepository.findByCourseAndMission(lessonChoice.getCourse(), lessonChoice.getMission()).isPresent()) {
+            throw new PairExistsException(lessonChoice);
+        }
+    }
+
+    public PairDto matchPairs(LessonDto lessonChoice) {
+        Course course = lessonChoice.getCourse();
+        Level level = lessonChoice.getLevel();
+        Mission mission = lessonChoice.getMission();
+
         int tryCount = 0;
-        Course course = Course.findByName(choice.get(0));
-        Level level = Level.findByName(choice.get(1));
-        Mission mission = missionRespository.findByNameAndLevel(choice.get(2), level);
-
-        //페어 존재하는지 확인
-        checkExistingPair(course, mission);
-
-        //페어 매칭
         List<String> crewNames = crewRepository.getShuffledNames(course);
         while (true) {
             try {
@@ -48,43 +53,42 @@ public class PairService {
                 }
             }
         }
-
         return createPairsDto(course, mission);
     }
 
-    private PairDtos createPairsDto(Course course, Mission mission) {
-        List<Pair> pairs = pairRepository.findByCourseAndMission(course, mission);
+    private PairDto createPairsDto(Course course, Mission mission) {
+        Optional<Pair> pair = pairRepository.findByCourseAndMission(course, mission);
         List<List<String>> pairCrewNames = new ArrayList<>();
-        for (Pair pair : pairs) {
+        for (CrewPair crewPair : pair.orElseThrow().getCrewPairs()) {
             List<String> onePairCrewNames = new ArrayList<>();
-            for (Crew crew : pair.getCrews()) {
+            for (Crew crew : crewPair.getCrews()) {
                 onePairCrewNames.add(crew.getName());
             }
             pairCrewNames.add(onePairCrewNames);
         }
-        return new PairDtos(pairCrewNames);
+        return new PairDto(pairCrewNames);
     }
 
-    private void checkExistingPair(Course course, Mission mission) {
-        if (pairRepository.hasPairWithCourseAndMission(course, mission)) {
-            throw new PairExistsException();
-        }
+    public void removePairs(LessonDto lessonChoice) {
+        pairRepository.removePair(lessonChoice.getCourse(), lessonChoice.getMission());
     }
 
     private void matchEveryPair(List<String> crewNames, Course course, Level level, Mission mission) {
         int i = 0;
+        List<CrewPair> pair = new ArrayList<>();
         while (i < crewNames.size()) {
             if (i == crewNames.size() - 2) {
-                pairRepository.save(course, mission, matchOnePair(i, crewNames, 2, course, level));
+                pair.add(new CrewPair(matchOnePair(i, crewNames, 2, course, level)));
                 break;
             }
             if (i == crewNames.size() - 3) {
-                pairRepository.save(course, mission, matchOnePair(i, crewNames, 3, course, level));
+                pair.add(new CrewPair(matchOnePair(i, crewNames, 3, course, level)));
                 break;
             }
-            pairRepository.save(course, mission, matchOnePair(i, crewNames, 2, course, level));
+            pair.add(new CrewPair(matchOnePair(i, crewNames, 2, course, level)));
             i += 2;
         }
+        pairRepository.save(course, mission, pair);
     }
 
     private List<Crew> matchOnePair(int indexOfCrewNames, List<String> crewNames, int pairSize, Course course, Level level) {

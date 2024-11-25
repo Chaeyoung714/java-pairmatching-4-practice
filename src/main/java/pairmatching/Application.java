@@ -23,7 +23,6 @@ public class Application {
                 , new MissionService(missionRespository)
                 , new PairService(missionRespository, crewRepository, pairRepository)
         );
-
         controller.run();
     }
 }

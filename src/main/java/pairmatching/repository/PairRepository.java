@@ -2,7 +2,9 @@ package pairmatching.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import pairmatching.model.Crew;
+import pairmatching.model.CrewPair;
 import pairmatching.model.Pair;
 import pairmatching.model.lesson.Course;
 import pairmatching.model.lesson.Level;
@@ -15,8 +17,7 @@ public class PairRepository {
         this.pairs = new ArrayList<>();
     }
 
-    public void save(Course course, Mission mission, List<Crew> crews) {
-        // 페어가 존재하는지 확인하고 넣어야함
+    public void save(Course course, Mission mission, List<CrewPair> crews) {
         pairs.add(new Pair(course, mission, crews));
     }
 
@@ -25,19 +26,17 @@ public class PairRepository {
             if (!pairMatchesCourseAndLevel(pair, course, level)) {
                 continue;
             }
-            int duplicatedCount = 0;
-            List<Crew> targetCrews = pair.getCrews();
-            for (Crew targetCrew : targetCrews) {
-                if (crews.contains(targetCrew)) {
-                    duplicatedCount++;
+            List<CrewPair> targetCrewPairs = pair.getCrewPairs();
+            for (CrewPair crewPair : targetCrewPairs) {
+                int duplicatedCount = 0;
+                for (Crew targetCrew : crewPair.getCrews()) {
+                    if (crews.contains(targetCrew)) {
+                        duplicatedCount++;
+                    }
                 }
-            }
-            //같은 과정과 레벨의 페어가 2명 이상 중복 시
-            if (duplicatedCount > 1) {
-                try {
+                //같은 과정과 레벨의 페어가 2명 이상 중복 시
+                if (duplicatedCount > 1) {
                     return true;
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
                 }
             }
         }
@@ -48,20 +47,21 @@ public class PairRepository {
         return pair.getCourse().equals(course) && pair.getMission().getLevel().equals(level);
     }
 
-    public boolean hasPairWithCourseAndMission(Course course, Mission mission) {
-        if (findByCourseAndMission(course, mission).isEmpty()) {
-            return false;
-        }
-        return true;
-    }
-
-    public List<Pair> findByCourseAndMission(Course course, Mission mission) {
-        List<Pair> matchedPairs = new ArrayList<>();
+    public Optional<Pair> findByCourseAndMission(Course course, Mission mission) {
         for (Pair pair : pairs) {
             if (pair.getCourse().equals(course) && pair.getMission().equals(mission)) {
-                matchedPairs.add(pair);
+                return Optional.of(pair);
             }
         }
-        return matchedPairs;
+        return Optional.empty();
+    }
+
+    public void removePair(Course course, Mission mission) {
+        Optional<Pair> removingPair = findByCourseAndMission(course, mission);
+        if (removingPair.isPresent()) {
+            pairs.remove(removingPair.orElseThrow());
+            return;
+        }
+        throw new IllegalStateException("[SYSTEM] 해당하는 과정과 미션의 페어가 없습니다.");
     }
 }

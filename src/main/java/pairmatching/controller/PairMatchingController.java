@@ -2,7 +2,8 @@ package pairmatching.controller;
 
 import java.util.List;
 import pairmatching.dto.LessonDto;
-import pairmatching.dto.PairDtos;
+import pairmatching.dto.MissionInfoDto;
+import pairmatching.dto.PairDto;
 import pairmatching.util.PairExistsException;
 import pairmatching.service.CrewService;
 import pairmatching.service.MissionService;
@@ -28,9 +29,13 @@ public class PairMatchingController {
 
     public void run() {
         crewService.registerCrews();
-        LessonDto lessonDto = missionService.registerMissions();
+        MissionInfoDto missionInfoDto = missionService.registerMissions();
+        doOneFunction(missionInfoDto);
+    }
+
+    private void doOneFunction(MissionInfoDto missionInfoDto) {
         String functionInput = chooseFunction();
-        performService(functionInput, lessonDto);
+        performService(functionInput, missionInfoDto);
     }
 
     private String chooseFunction() {
@@ -44,11 +49,12 @@ public class PairMatchingController {
         }
     }
 
-    private void performService(String function, LessonDto lessonDto) {
+    private void performService(String function, MissionInfoDto missionInfoDto) {
         if (continueService(function)) {
             if (function.equals("1")) {
-                PairDtos pairDtos = performMatchService(lessonDto);
-                outputView.printMatchedPairs(pairDtos);
+                outputView.printMissions(missionInfoDto);
+                PairDto pairDto = performMatchService();
+                outputView.printMatchedPairs(pairDto);
             }
             if (function.equals("2")) {
 
@@ -56,30 +62,32 @@ public class PairMatchingController {
             if (function.equals("3")) {
 
             }
-            chooseFunction();
+            doOneFunction(missionInfoDto);
         }
     }
 
-    private PairDtos performMatchService(LessonDto lessonDto) {
+    private PairDto performMatchService() {
         while (true) {
             try {
-                outputView.printMissions(lessonDto);
-                List<String> missionChoice = chooseMission();
-                return pairService.matchPairs(missionChoice);
+                List<String> lessonChoice = chooseLesson();
+                LessonDto lessonDto = missionService.findMatchingLesson(lessonChoice);
+                pairService.checkExistingPair(lessonDto);
+                return pairService.matchPairs(lessonDto);
             } catch (PairExistsException e) {
                 // 페어 재매칭 물어봐야 함
                 if (inputRematch()) {
-                    chooseMission();
-                    return performMatchService(lessonDto);
+                    pairService.removePairs(e.getLessonOfExistingPair());
+                    return pairService.matchPairs(e.getLessonOfExistingPair());
                 }
+                return performMatchService();
             } catch (IllegalStateException | IllegalArgumentException e) {
                 outputView.printErrorMessage("[ERROR] 잘못된 입력입니다. 다시 입력해주세요.");
             }
         }
     }
 
-    private List<String> chooseMission() {
-        return inputView.inputMissionChoice();
+    private List<String> chooseLesson() {
+        return inputView.inputLessonChoice();
     }
 
     private boolean inputRematch() {
@@ -94,6 +102,6 @@ public class PairMatchingController {
     }
 
     private boolean continueService(String function) {
-        return function != "Q";
+        return !function.equals("Q");
     }
 }

@@ -1,32 +1,29 @@
 package pairmatching.dto;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import pairmatching.model.lesson.Course;
 import pairmatching.model.lesson.Level;
+import pairmatching.model.lesson.Mission;
 
 public class LessonDto {
-    private final List<String> courseNames;
-    private final List<Level> levels;
-    private final Map<Level, List<String>> missionNamesByLevel;
+    private final Course course;
+    private final Level level;
+    private final Mission mission;
 
-    public LessonDto(Map<Level, List<String>> missionNamesByLevel) {
-        this.courseNames = Course.getAllNames();
-        this.levels = new ArrayList<>(List.of(Level.values()));
-        this.missionNamesByLevel = missionNamesByLevel;
+    public LessonDto(Course course, Level level, Mission mission) {
+        this.course = course;
+        this.level = level;
+        this.mission = mission;
     }
 
-    public List<String> getCourseNames() {
-        return courseNames;
+    public Course getCourse() {
+        return course;
     }
 
-    public Map<Level, List<String>> getMissionNamesByLevel() {
-        return missionNamesByLevel;
+    public Level getLevel() {
+        return level;
     }
 
-    public List<Level> getLevels() {
-        return levels;
+    public Mission getMission() {
+        return mission;
     }
 }

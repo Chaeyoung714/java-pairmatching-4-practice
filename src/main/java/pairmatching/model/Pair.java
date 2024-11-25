@@ -8,23 +8,16 @@ import pairmatching.model.lesson.Mission;
 public class Pair {
     private final Course course;
     private final Mission mission;
-    private final List<Crew> crews;
+    private final List<CrewPair> crewPairs;
 
-    public Pair(Course course, Mission mission, List<Crew> crews) {
-        validateSize(crews);
+    public Pair(Course course, Mission mission, List<CrewPair> crewPairs) {
         this.course = course;
         this.mission = mission;
-        this.crews = crews;
+        this.crewPairs = crewPairs;
     }
 
-    private void validateSize(List<Crew> crews) {
-        if (crews.size() != 2 && crews.size() != 3) {
-            throw new IllegalStateException("[SYSTEM] 페어 매칭 수가 알맞지 않습니다.");
-        }
-    }
-
-    public List<Crew> getCrews() {
-        return Collections.unmodifiableList(crews);
+    public List<CrewPair> getCrewPairs() {
+        return crewPairs;
     }
 
     public Mission getMission() {
