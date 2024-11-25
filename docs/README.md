@@ -10,8 +10,9 @@
 
 ## 0. 크루 정보 등록
 
-- [ ]  페어 매칭에 필요한 크루들의 이름을 파일 입출력을 통해 불러온다.
-- [ ]  `src/main/resources/backend-crew.md`과 `src/main/resources/frontend-crew.md` 파일을 이용한다.
+- [x]  페어 매칭에 필요한 크루들의 이름을 파일 입출력을 통해 불러온다.
+- [x]  `src/main/resources/backend-crew.md`과 `src/main/resources/frontend-crew.md` 파일을 이용한다.
+- [x] 크루들의 이름은 중복될 수 없다.
 
 ## 1. 사용자 기능 선택
 
