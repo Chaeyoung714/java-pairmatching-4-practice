@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import pairmatching.model.Course;
-import pairmatching.model.FileReader;
+import pairmatching.model.lesson.Course;
+import pairmatching.util.FileReader;
 import pairmatching.repository.CrewRepository;
 
 public class CrewService {
@@ -19,6 +19,8 @@ public class CrewService {
     public void registerCrews() {
         List<String> backendCrewNames = FileReader.readCrew("./src/main/resources/backend-crew.md");
         List<String> frontEndCrewNames = FileReader.readCrew("./src/main/resources/frontend-crew.md");
+//        List<String> backendCrewNames = FileReader.readCrew("./java-pairmatching-precourse/src/main/resources/backend-crew.md");
+//        List<String> frontEndCrewNames = FileReader.readCrew("./java-pairmatching-precourse/src/main/resources/frontend-crew.md");
 
         List<String> totalCrewNames = Stream.of(backendCrewNames, frontEndCrewNames)
                 .flatMap(x -> x.stream())

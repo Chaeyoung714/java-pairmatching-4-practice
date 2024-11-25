@@ -1,4 +1,4 @@
-package pairmatching.model;
+package pairmatching.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,5 @@ public class FileReader {
             throw new IllegalStateException("[SYSTEM] File not found");
         }
     }
-
-
 
 }
