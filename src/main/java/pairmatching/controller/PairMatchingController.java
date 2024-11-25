@@ -4,10 +4,11 @@ import java.util.List;
 import pairmatching.dto.LessonDto;
 import pairmatching.dto.MissionInfoDto;
 import pairmatching.dto.PairDto;
+import pairmatching.service.PairRetrieveService;
 import pairmatching.util.PairExistsException;
 import pairmatching.service.CrewService;
 import pairmatching.service.MissionService;
-import pairmatching.service.PairService;
+import pairmatching.service.PairMatchService;
 import pairmatching.view.InputView;
 import pairmatching.view.OutputView;
 
@@ -16,15 +17,18 @@ public class PairMatchingController {
     private final OutputView outputView;
     private final CrewService crewService;
     private final MissionService missionService;
-    private final PairService pairService;
+    private final PairMatchService pairMatchService;
+    private final PairRetrieveService pairRetrieveService;
 
     public PairMatchingController(InputView inputView, OutputView outputView, CrewService crewService,
-                                  MissionService missionService, PairService pairService) {
+                                  MissionService missionService, PairMatchService pairMatchService,
+                                  PairRetrieveService pairRetrieveService) {
         this.inputView = inputView;
         this.outputView = outputView;
         this.crewService = crewService;
         this.missionService = missionService;
-        this.pairService = pairService;
+        this.pairMatchService = pairMatchService;
+        this.pairRetrieveService = pairRetrieveService;
     }
 
     public void run() {
@@ -57,7 +61,9 @@ public class PairMatchingController {
                 outputView.printMatchedPairs(pairDto);
             }
             if (function.equals("2")) {
-
+                outputView.printMissions(missionInfoDto);
+                PairDto pairDto = performRetrieveServie();
+                outputView.printRetrievedPairs(pairDto);
             }
             if (function.equals("3")) {
 
@@ -71,15 +77,26 @@ public class PairMatchingController {
             try {
                 List<String> lessonChoice = chooseLesson();
                 LessonDto lessonDto = missionService.findMatchingLesson(lessonChoice);
-                pairService.checkExistingPair(lessonDto);
-                return pairService.matchPairs(lessonDto);
+                pairMatchService.checkExistingPair(lessonDto);
+                return pairMatchService.matchPairs(lessonDto);
             } catch (PairExistsException e) {
-                // 페어 재매칭 물어봐야 함
                 if (inputRematch()) {
-                    pairService.removePairs(e.getLessonOfExistingPair());
-                    return pairService.matchPairs(e.getLessonOfExistingPair());
+                    pairMatchService.removePairs(e.getLessonOfExistingPair());
+                    return pairMatchService.matchPairs(e.getLessonOfExistingPair());
                 }
                 return performMatchService();
+            } catch (IllegalStateException | IllegalArgumentException e) {
+                outputView.printErrorMessage("[ERROR] 잘못된 입력입니다. 다시 입력해주세요.");
+            }
+        }
+    }
+
+    private PairDto performRetrieveServie() {
+        while (true) {
+            try {
+                List<String> lessonChoice = chooseLesson();
+                LessonDto lessonDto = missionService.findMatchingLesson(lessonChoice);
+                return pairRetrieveService.retrievePair(lessonDto);
             } catch (IllegalStateException | IllegalArgumentException e) {
                 outputView.printErrorMessage("[ERROR] 잘못된 입력입니다. 다시 입력해주세요.");
             }

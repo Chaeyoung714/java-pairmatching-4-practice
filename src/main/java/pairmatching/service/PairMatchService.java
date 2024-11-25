@@ -17,13 +17,13 @@ import pairmatching.repository.CrewRepository;
 import pairmatching.repository.MissionRespository;
 import pairmatching.repository.PairRepository;
 
-public class PairService {
+public class PairMatchService {
     private final MissionRespository missionRespository;
     private final CrewRepository crewRepository;
     private final PairRepository pairRepository;
 
-    public PairService(MissionRespository missionRespository, CrewRepository crewRepository,
-                       PairRepository pairRepository) {
+    public PairMatchService(MissionRespository missionRespository, CrewRepository crewRepository,
+                            PairRepository pairRepository) {
         this.missionRespository = missionRespository;
         this.crewRepository = crewRepository;
         this.pairRepository = pairRepository;

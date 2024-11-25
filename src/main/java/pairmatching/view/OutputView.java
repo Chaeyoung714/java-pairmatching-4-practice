@@ -72,4 +72,12 @@ public class OutputView {
             System.out.print(" : ");
         }
     }
+
+    public void printRetrievedPairs(PairDto pairDto) {
+        if (pairDto.getDto().isEmpty()) {
+            System.out.println("[ERROR] 매칭 이력이 없습니다." + System.lineSeparator());
+            return;
+        }
+        printMatchedPairs(pairDto);
+    }
 }

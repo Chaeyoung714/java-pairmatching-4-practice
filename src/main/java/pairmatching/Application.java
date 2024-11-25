@@ -6,7 +6,8 @@ import pairmatching.repository.MissionRespository;
 import pairmatching.repository.PairRepository;
 import pairmatching.service.CrewService;
 import pairmatching.service.MissionService;
-import pairmatching.service.PairService;
+import pairmatching.service.PairMatchService;
+import pairmatching.service.PairRetrieveService;
 import pairmatching.view.InputView;
 import pairmatching.view.OutputView;
 
@@ -21,7 +22,8 @@ public class Application {
                 , new OutputView()
                 , new CrewService(crewRepository)
                 , new MissionService(missionRespository)
-                , new PairService(missionRespository, crewRepository, pairRepository)
+                , new PairMatchService(missionRespository, crewRepository, pairRepository)
+                , new PairRetrieveService(pairRepository)
         );
         controller.run();
     }
