@@ -63,19 +63,34 @@ public class PairMatchingController {
     private PairDtos performMatchService(LessonDto lessonDto) {
         while (true) {
             try {
-                List<String> missionChoice = chooseMission(lessonDto);
+                outputView.printMissions(lessonDto);
+                List<String> missionChoice = chooseMission();
                 return pairService.matchPairs(missionChoice);
             } catch (PairExistsException e) {
                 // 페어 재매칭 물어봐야 함
-                throw e;
+                if (inputRematch()) {
+                    chooseMission();
+                    return performMatchService(lessonDto);
+                }
             } catch (IllegalStateException | IllegalArgumentException e) {
                 outputView.printErrorMessage("[ERROR] 잘못된 입력입니다. 다시 입력해주세요.");
             }
         }
     }
 
-    private List<String> chooseMission(LessonDto lessonDto) {
-        return inputView.inputMissionChoice(lessonDto);
+    private List<String> chooseMission() {
+        return inputView.inputMissionChoice();
+    }
+
+    private boolean inputRematch() {
+        while (true) {
+            try {
+                String answer = inputView.inputRematch();
+                return answer.equals("네");
+            } catch (IllegalArgumentException e) {
+                outputView.printErrorMessage("[ERROR] 잘못된 입력입니다. 다시 입력해주세요.");
+            }
+        }
     }
 
     private boolean continueService(String function) {

@@ -28,11 +28,7 @@ public class InputView {
         }
     }
 
-    public List<String> inputMissionChoice(LessonDto lessonDto) {
-        System.out.println(System.lineSeparator() + "#############################################");
-        printCourseNames(lessonDto);
-        printMissionNames(lessonDto);
-        System.out.println("############################################");
+    public List<String> inputMissionChoice() {
         System.out.println("과정, 레벨, 미션을 선택하세요." + System.lineSeparator()
                 + "ex) 백엔드, 레벨1, 자동차경주");
         String choices = Console.readLine();
@@ -47,33 +43,17 @@ public class InputView {
         }
     }
 
-    private void printCourseNames(LessonDto lessonDto) {
-        List<String> courseNames = lessonDto.getCourseNames();
-        System.out.println(String.format("과정: %s | %s", courseNames.get(0), courseNames.get(1)));
+    public String inputRematch() {
+        System.out.println("매칭 정보가 있습니다. 다시 매칭하시겠습니까?"
+                + System.lineSeparator() + "네 | 아니오");
+        String answer = Console.readLine();
+        validateYesNoAnswer(answer);
+        return answer;
     }
 
-    private void printMissionNames(LessonDto lessonDto) {
-        Map<Level, List<String>> missionNames = lessonDto.getMissionNamesByLevel();
-        System.out.println(String.format("미션:"));
-        for (Level level : lessonDto.getLevels()) {
-            System.out.printf("\t- %s: ", level.getName());
-            List<String> missionNamesByLevel = missionNames.get(level);
-            int namesAmount = missionNamesByLevel.size();
-            if (missionNamesByLevel.isEmpty()) {
-                System.out.println();
-                continue;
-            }
-            for (int i = 0; i < namesAmount; i++) {
-                System.out.print(missionNamesByLevel.get(i));
-                printDelimiter(i, namesAmount);
-            }
-            System.out.println();
-        }
-    }
-
-    private void printDelimiter(int i, int namesAmount) {
-        if (i < namesAmount - 1) {
-            System.out.print(" | ");
+    private void validateYesNoAnswer(String answer) {
+        if (answer != "네" && answer != "아니오") {
+            throw new IllegalArgumentException();
         }
     }
 }
